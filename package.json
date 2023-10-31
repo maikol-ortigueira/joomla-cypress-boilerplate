@@ -1,0 +1,21 @@
+{
+  "name": "joomla-cypress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cypress:install": "cypress install",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "keywords": [],
+  "author": "Maikol Fustes",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.3.3",
+    "joomla-cypress": "^0.0.16",
+    "mysql": "^2.18.1",
+    "postgres": "^3.3.5",
+    "smtp-tester": "^2.1.0"
+  }
+}

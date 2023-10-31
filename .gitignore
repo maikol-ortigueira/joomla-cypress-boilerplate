@@ -1,0 +1,7 @@
+/cypress/output/screenshots
+!/cypress/output/screenshots/.gitkeep
+/cypress/output/videos
+!/cypress/output/videos/.gitkeep
+cypress.config.js
+/node_modules
+!/.gitignore
