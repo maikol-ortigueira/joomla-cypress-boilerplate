@@ -9,7 +9,7 @@ import './commands/api';
 import './commands/config';
 import './commands/db';
 
-const { registerCommands } = require('../../node_modules/joomla-cypress/src/index.js');
+const { registerCommands } = require('../../../node_modules/joomla-cypress/src/index.js');
 
 registerCommands();
 
@@ -39,6 +39,37 @@ Cypress.Commands.overwrite('doFrontendLogout', (originalFn) => {
   Cypress.session.clearAllSavedSessions();
 });
 
+const iniciarSesionAdmin = (user, pw) => {
+    // Call the normal function
+    cy.log('**Iniciar sesión en el Panel de administración**')
+    cy.log('User: ' + user)
+    cy.log('Password: ' + pw)
+  
+    cy.visit('administrator/index.php')
+    cy.get('#mod-login-username').type(user)
+    cy.get('#mod-login-password').type(pw)
+    cy.get('#btn-login-submit').click()
+    cy.get('h1.page-title').should('contain', 'Panel de inicio')
+  
+    cy.log('--Iniciar sesión en el Panel de administración--')
+}
+
+Cypress.Commands.add('doSpanishAdminLogin', (username, password, useSnapshot = true) => {
+  const user = username ?? Cypress.env('username');
+  const pw = password ?? Cypress.env('password');
+
+  // Do normal login when no snapshot should be used
+  if (!useSnapshot) {
+    // Clear the session data
+    Cypress.session.clearAllSavedSessions();
+    iniciarSesionAdmin(user, pw);
+  }
+
+  // Do login through the session
+  Cypress.session.clearAllSavedSessions();
+  return cy.session([user, pw, 'back'], () => iniciarSesionAdmin(user, pw), { cacheAcrossSpecs: true });
+});
+
 Cypress.Commands.overwrite('doAdministratorLogin', (originalFn, username, password, useSnapshot = true) => {
   // Ensure there are valid credentials
   const user = username ?? Cypress.env('username');
@@ -48,9 +79,7 @@ Cypress.Commands.overwrite('doAdministratorLogin', (originalFn, username, passwo
   if (!useSnapshot) {
     // Clear the session data
     Cypress.session.clearAllSavedSessions();
-
-    // Call the normal function
-    return originalFn(user, pw);
+    originalFn(user, pw);
   }
 
   // Do login through the session
@@ -64,3 +93,4 @@ Cypress.Commands.overwrite('doAdministratorLogout', (originalFn) => {
   // Clear the session data
   Cypress.session.clearAllSavedSessions();
 });
+

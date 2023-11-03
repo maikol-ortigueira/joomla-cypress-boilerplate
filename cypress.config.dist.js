@@ -25,9 +25,9 @@ module.exports = defineConfig({
     video: false,
   },
   env: {
-    sitename: 'Joomla CMS Test',
-    name: 'jane doe',
-    email: 'admin@example.com',
+    sitename: 'Joomla CMS - Entorno de pruebas',
+    name: 'Maikol Fustes',
+    email: 'admin@ejemplo.com',
     username: 'ci-admin',
     password: 'joomla-17082005',
     db_type: 'MySQLi',

@@ -587,3 +587,5 @@ Cypress.Commands.add('db_getUserId', () => {
       return id[0].id;
     });
 });
+
+module.exports = { getDefaultCategoryId, createInsertQuery };

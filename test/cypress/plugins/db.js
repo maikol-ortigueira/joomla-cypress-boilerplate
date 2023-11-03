@@ -73,7 +73,7 @@ function queryTestDB(joomlaQuery, config) {
   return new Promise((resolve, reject) => {
     // Create the connection and connect
     const connection = mysql.createConnection({
-      host: config.env.db_host,
+      host: config.env.host,
       port: config.env.db_port,
       user: config.env.db_user,
       password: config.env.db_password,
@@ -133,6 +133,10 @@ function deleteInsertedItems(config) {
 
       if (item.table === `${config.env.db_prefix}modules`) {
         promises.push(queryTestDB(`DELETE FROM #__modules_menu WHERE moduleid IN (${item.rows.join(',')})`, config));
+      }
+
+      if (item.table !== `${config.env.db_prefix}users`) {
+        promises.push(queryTestDB(`ALTER TABLE ${item.table} AUTO_INCREMENT = 1`, config));
       }
     }));
   });

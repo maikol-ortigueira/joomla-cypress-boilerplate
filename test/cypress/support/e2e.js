@@ -17,20 +17,28 @@
 import './joomla_commands'
 import './commands'
 import 'joomla-cypress'
+import './custom_commands/com_odt'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 before(() => {
-    cy.task('startMailServer');
-    Cypress.on('uncaught:exception', (err, runnable) => {
-      console.log(`err :${err}`);
-      console.log(`runnable :${runnable}`);
-      return false;
-    });
+  // cy.task('startMailServer');
+  // cy.db_createPsicos(10);
+  // cy.db_createComites(5);
+  // cy.db_createSecciones(5);
+  // cy.db_createAsociaciones(10);
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    console.log(`err :${err}`);
+    console.log(`runnable :${runnable}`);
+    return false;
   });
-  
-  afterEach(() => {
-    cy.checkForPhpNoticesOrWarnings();
-    cy.task('cleanupDB');
-  });
+});
+
+afterEach(() => {
+  cy.checkForPhpNoticesOrWarnings();
+})
+
+after(() => {
+  //cy.task('cleanupDB');
+});
