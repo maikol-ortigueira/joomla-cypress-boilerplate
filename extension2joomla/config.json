@@ -1,0 +1,6 @@
+{
+    "extName": "ortfeap",
+    "srcDir": "../joomla_extensions",
+    "destDir": "../src",
+    "releaseDir": "../releases"
+}
