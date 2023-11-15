@@ -2,7 +2,7 @@
 !test/cypress/output/screenshots/.gitkeep
 /test/cypress/output/videos
 !test/cypress/output/videos/.gitkeep
-cypress.config.js
+!cypress.config.js
 /node_modules
 /test/cypress/support/custom_commands/**
 /test/cypress/e2e/mi_install/**
@@ -19,4 +19,4 @@ cypress.config.js
 /extension2joomla/config.json
 /extension2joomla/extensions-config.json
 .gitignore_ortfeap
-/.env
+.env
