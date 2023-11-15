@@ -1,17 +1,15 @@
 {
-    "components": [""],
+    "components": ["foo","bar"],
     "plugins": {
-        "system": [],
-        "content": []
+        "extension": [""],
+        "system": ["foo","bar"],
+        "user": [""]
     },
     "modules": {
-        "site": [],
+        "site": [""],
         "admin": []
     },
-    "templates": {
-        "site": [],
-        "admin": []
-    },
+    "templates": [""],
     "libraries": [""],
     "files": [],
     "package": {
@@ -20,7 +18,7 @@
         "creationDate": "",
         "label": "",
         "description": "",
-        "version": "1.0.0",
+        "version": "",
         "author": ""
     }
 }

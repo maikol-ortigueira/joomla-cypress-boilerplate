@@ -7,7 +7,6 @@ if (getTemplates !== false) {
     let cleanTemplates = [],
         copyTemplates = [],
         watchTemplates = [],
-        backupTemplates = [],
         releaseTemplates = [];
 
     templates.forEach(name => {
@@ -16,13 +15,11 @@ if (getTemplates !== false) {
         cleanTemplates.push(temp.cleanTask)
         copyTemplates.push(temp.copyTask)
         watchTemplates.push(temp.watchTask)
-        backupTemplates.push(temp.backupTask)
         releaseTemplates.push(temp.releaseTask)
     })
 
     task(`cleanTemplates`, parallel(...cleanTemplates));
     task(`copyTemplates`, parallel(...copyTemplates));
     task(`watchTemplates`, parallel(...watchTemplates));
-    task(`backupTemplates`, parallel(...backupTemplates));
     task(`releaseTemplates`, parallel(...releaseTemplates));
 }

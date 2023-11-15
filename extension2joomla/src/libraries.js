@@ -7,7 +7,6 @@ if (hasLibraries) {
     let cleanLibraries = [], 
         copyLibraries = [], 
         watchLibraries = [],
-        backupLibraries = [],
         releaseLibraries = [];
 
     libraries.forEach(name => {
@@ -16,13 +15,11 @@ if (hasLibraries) {
         cleanLibraries.push(library.cleanTask);
         copyLibraries.push(library.copyTask);
         watchLibraries.push(library.watchTask);
-        backupLibraries.push(library.backupTask);
         releaseLibraries.push(library.releaseTask);
     });
 
     task(`cleanLibraries`, parallel(...cleanLibraries));
     task(`copyLibraries`, parallel(...copyLibraries));
     task(`watchLibraries`, parallel(...watchLibraries));
-    task(`backupLibraries`, parallel(...backupLibraries));
     task(`releaseLibraries`, parallel(...releaseLibraries));
 }

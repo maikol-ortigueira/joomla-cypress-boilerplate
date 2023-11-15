@@ -106,7 +106,7 @@ function hasConfigJsonFile() {
 }
 
 function hasExtensionConfigFile(){
-    if (fs.existsSync(`${srcDir}/${extName}/extensions-config.json`)){
+    if (fs.existsSync(`../extensions-config.json`)){
         return true;
     }
     return false;

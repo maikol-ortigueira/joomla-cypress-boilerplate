@@ -20,12 +20,12 @@ describe('Instalación de Joomla', () => {
         //cy.visit('/installation/index.php')
 
         // Instalar español
-        cy.get('#installAddFeatures').click();
-        cy.contains('tr', 'spanish', { matchCase: false }).within(() => {
-            cy.get('td').first().click();
-        });
-        cy.get('#installLanguagesButton').click();
-        cy.wait(8000);
+        // cy.get('#installAddFeatures').click();
+        // cy.contains('tr', 'spanish', { matchCase: false }).within(() => {
+        //     cy.get('td').first().click();
+        // });
+        // cy.get('#installLanguagesButton').click();
+        // cy.wait(8000);
         // cy.get('#admin-language-cb1').click();
         // cy.get('#site-language-cb1').click();
         // cy.get('#defaultLanguagesButton').click();
@@ -37,12 +37,12 @@ describe('Instalación de Joomla', () => {
         cy.doAdministratorLogout();
     
         // Update to the correct secret for the API tests because of the bearer token
-        cy.config_setParameter('secret', 'tEstValue');
+        // cy.config_setParameter('secret', 'tEstValue');
     
-        // Setup mailing
-        cy.config_setParameter('mailonline', true);
-        cy.config_setParameter('mailer', 'smtp');
-        cy.config_setParameter('smtphost', Cypress.env('smtp_host'));
-        cy.config_setParameter('smtpport', Cypress.env('smtp_port'));
+        // // Setup mailing
+        // cy.config_setParameter('mailonline', true);
+        // cy.config_setParameter('mailer', 'smtp');
+        // cy.config_setParameter('smtphost', Cypress.env('smtp_host'));
+        // cy.config_setParameter('smtpport', Cypress.env('smtp_port'));
         })
 })

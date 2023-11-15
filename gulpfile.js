@@ -1,10 +1,10 @@
-const { hasConfigJsonFile, initialInfo } = require('./src/info');
+const { hasConfigJsonFile, initialInfo } = require('./extension2joomla/src/info');
 
 if (hasConfigJsonFile() === false) {
     initialInfo();
 } else {
-    const tareas = require('./src/tasks');
-    const utils = require('./src/utils')
+    const tareas = require('./extension2joomla/src/tasks');
+    const utils = require('./extension2joomla/src/utils')
     const {task, series, parallel} = require('gulp')
     
     task('clean', series(...tareas.cleanTasks));

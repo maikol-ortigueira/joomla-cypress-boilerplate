@@ -3,6 +3,7 @@ version: '3.1'
 services:
   joomladb:
     image: mysql:${MYSQL_VERSION}
+    restart: always
     container_name: ${JOOMLA_DB_HOST}
     ports:
       - "${JOOMLA_DB_PORT}:3306"
@@ -11,35 +12,41 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${JOOMLA_DB_PASSWORD}
       - MYSQL_DATABASE=${JOOMLA_DB_NAME}
+      - MYSQL_USER=${JOOMLA_DB_USER}
+      - MYSQL_PASSWORD=${JOOMLA_DB_PASSWORD}
     command: --default-authentication-plugin=mysql_native_password
 
   php_myadmin:
     image: phpmyadmin:latest
+    restart: always
     container_name: php_myadmin_joomla
     ports:
       - "${PHPMYADMIN_PORT}:80"
     environment:
-      - MYSQL_ROOT_PASSWORD=${JOOMLA_DB_PASSWORD}
+      - PMA_HOSTS=joomladb
     links:
       - joomladb
 
   joomla_cms:
     image: joomla:${JOOMLA_VERSION}-php${PHP_VERSION}-apache
+    restart: always
     container_name: joomla_cms
     ports:
       - "${JOOMLA_PORT}:80"
     volumes:
       - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini:ro
-      - joomla_data:/var/www/html:rw
+      - ./src:/var/www/html:rw
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
     environment:
       - JOOMLA_DB_USER=${JOOMLA_DB_USER}
       - JOOMLA_DB_PASSWORD=${JOOMLA_DB_PASSWORD}
       - JOOMLA_DB_NAME=${JOOMLA_DB_NAME}
       - JOOMLA_DB_HOST=joomladb
+      - APACHE_RUN_USER=${CURRENT_USER}
+      - APACHE_RUN_GROUP=${CURRENT_GROUP}
     links:
       - joomladb:mysql
-
-
+    
 volumes:
   mysql_db:
-  joomla_data:

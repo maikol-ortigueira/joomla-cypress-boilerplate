@@ -29,16 +29,17 @@ if (extName == 'undefined' || extName == '') {
     return false;
 }
 
-if (!fs.existsSync(`${sourcePath}/extensions-config.json`)) {
+if (!fs.existsSync(`${__dirname}/../extensions-config.json`)) {
     console.error('\x1b[1m\x1b[33m=============================================================================================== ');
     console.error("\x1b[37m|\n|   \x1b[31m¡¡Error!!\x1b[37m   Falta el fichero de configuración de la extensión\n|");
     console.error("|   Debes crear un fichero con el nombre \"\x1b[32mextensions-config.json\x1b[37m\" en la siguiente carpeta:\n|")
-    console.error("|   \x1b[32m" + `${sourcePath}/`);
+    console.error("|   \x1b[32m" + `./extension2joomla/`);
     console.error("\x1b[37m|\n|   Puedes copiar, pegar y sustituir los valores del fichero \"extension-config.json.dist\".");
     console.error("|   Deberás renombrarlo eliminando la extension \".dist\"\n|");
     console.error('\x1b[33m===============================================================================================\x1b[0m');
+    return process.exit();
 }
-const extConfig = require(`${sourcePath}/extensions-config.json`);
+const extConfig = require(`../extensions-config.json`);
 
 const hasComponents = () => {
     let hasComponents = extConfig.hasOwnProperty('components') &&

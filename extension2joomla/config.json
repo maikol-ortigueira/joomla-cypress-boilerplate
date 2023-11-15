@@ -2,5 +2,5 @@
     "extName": "ortfeap",
     "srcDir": "../joomla_extensions",
     "destDir": "../src",
-    "releaseDir": "../releases"
+    "releaseDir": "../releases/mi_code"
 }

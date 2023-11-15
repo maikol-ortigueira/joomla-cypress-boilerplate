@@ -17,7 +17,6 @@
 import './joomla_commands'
 import './commands'
 import 'joomla-cypress'
-import './custom_commands/com_odt'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

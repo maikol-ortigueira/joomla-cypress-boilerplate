@@ -5,6 +5,7 @@
 cypress.config.js
 /node_modules
 /test/cypress/support/custom_commands/**
+/test/cypress/e2e/mi_install/**
 /test/cypress/e2e/admin/**
 /test/cypress/e2e/api/**
 /test/cypress/e2e/plugins/**
@@ -13,6 +14,9 @@ cypress.config.js
 !/.gitignore
 /releases/**
 /src/**
-/joomla_extensions/**
+/joomla_extensions
+!/joomla_extensions/extensions-config.json.dist
 /extension2joomla/config.json
+/extension2joomla/extensions-config.json
 .gitignore_ortfeap
+/.env

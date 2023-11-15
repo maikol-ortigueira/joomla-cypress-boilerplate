@@ -7,7 +7,6 @@ if (hasModules) {
     let cleanModules = [],
         copyModules = [],
         watchModules = [],
-        backupModules = [],
         releaseModules = []
 
     for (let client in clients) {
@@ -17,7 +16,6 @@ if (hasModules) {
             cleanModules.push(module.cleanTask)
             copyModules.push(module.copyTask)
             watchModules.push(module.watchTask)
-            backupModules.push(module.backupTask)
             releaseModules.push(module.releaseTask)
         })
     }
@@ -25,6 +23,5 @@ if (hasModules) {
     task(`cleanModules`, parallel(...cleanModules));
     task(`copyModules`, parallel(...copyModules));
     task(`watchModules`, parallel(...watchModules));
-    task(`backupModules`, parallel(...backupModules));
     task(`releaseModules`, parallel(...releaseModules));    
 }
