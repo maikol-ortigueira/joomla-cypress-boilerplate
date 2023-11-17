@@ -36,6 +36,7 @@ if (!fs.existsSync(`${__dirname}/../extensions-config.json`)) {
     console.error("|   \x1b[32m" + `./extension2joomla/`);
     console.error("\x1b[37m|\n|   Puedes copiar, pegar y sustituir los valores del fichero \"extension-config.json.dist\".");
     console.error("|   Deberás renombrarlo eliminando la extension \".dist\"\n|");
+    console.error("|\n|\n|   cp ./extension2joomla/extensions-config.json.dist ./extension2joomla/extensions-config.json\n|");
     console.error('\x1b[33m===============================================================================================\x1b[0m');
     return process.exit();
 }

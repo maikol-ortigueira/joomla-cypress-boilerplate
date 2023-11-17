@@ -27,6 +27,12 @@ Antes de nada copia y pega el fichero de environments, y adapta a tu configuraci
 cp .env.dist .env
 ```
 
+Es necesario cargar los paquetes de node con el comando:
+
+```bash
+npm ci
+```
+
 El fichero Makefile contiene una serie de scripts que permiten automatizar muchas cosas. Para saber las posibles opciones solo tienes que escribir en línea de comandos:
 
 ```bash

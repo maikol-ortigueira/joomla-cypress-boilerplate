@@ -1,5 +1,5 @@
 describe('Instalación de Joomla', () => {
-    it('Se instala correctamente', () => {
+    it('Se instala correctamente', () => {      
         cy.exec('rm configuration.php', { failOnNonZeroExit: false });
 
         const config = {
