@@ -13,7 +13,7 @@
 /test/cypress/fixtures/**
 !/.gitignore
 /releases/**
-/src/**
+/joomla/**
 /joomla_extensions
 !/joomla_extensions/extensions-config.json.dist
 /extension2joomla/config.json
