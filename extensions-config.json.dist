@@ -1,8 +1,8 @@
 {
-    "components": ["foo","bar"],
+    "components": ["foo"],
     "plugins": {
         "extension": [""],
-        "system": ["foo","bar"],
+        "system": [],
         "user": [""]
     },
     "modules": {

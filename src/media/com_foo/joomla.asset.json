@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_foo",
+  "version": "CVS: 1.0.0",
+  "license": "Licencia Pública General GNU versión 2 o posterior. Consulte LICENSE.txt",
+  "assets": [
+    {
+      "name": "com_foo.admin",
+      "type": "style",
+      "uri": "com_foo/admin.css"
+    },
+    {
+      "name": "com_foo.admin",
+      "type": "script",
+      "uri": "com_foo/admin.js",
+      "dependencies": [
+        "jquery"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+        "name": "com_foo.list",
+        "type": "style",
+        "uri": "com_foo/list.css"
+    }
+  ]
+}

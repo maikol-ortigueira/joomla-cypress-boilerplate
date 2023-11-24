@@ -16,7 +16,8 @@
 /joomla/**
 /joomla_extensions
 !/joomla_extensions/extensions-config.json.dist
+!/joomla_extensions/components/foo/*
 /extension2joomla/config.json
-/extension2joomla/extensions-config.json
+extensions-config.json
 .gitignore_ortfeap
 .env

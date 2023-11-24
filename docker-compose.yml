@@ -1,11 +1,18 @@
 version: '3.1'
 
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
   joomladb:
     image: mysql:${MYSQL_VERSION}
     restart: always
     ports:
-      - "${JOOMLA_DB_PORT}:3306"
+      - ${MYSQL_PORT}:3306
     volumes:
       - mysql_db:/var/lib/mysql
     environment:
@@ -42,6 +49,7 @@ services:
       - JOOMLA_DB_HOST=joomladb
       - APACHE_RUN_USER=${CURRENT_USER}
       - APACHE_RUN_GROUP=${CURRENT_GROUP}
+      - VIRTUAL_HOST=${JOOMLA_VIRTUAL_HOST}
     links:
       - joomladb:mysql
     

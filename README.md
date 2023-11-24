@@ -1,4 +1,4 @@
-# Joomla Test Boilerplate
+# Joomla Ready for Testing - Boilerplate
 
 ## Desarrollo de extensiones para Joomla con entorno de pruebas
 
@@ -33,6 +33,7 @@ Es necesario cargar los paquetes de node con el comando:
 npm ci
 ```
 
+
 El fichero Makefile contiene una serie de scripts que permiten automatizar muchas cosas. Para saber las posibles opciones solo tienes que escribir en línea de comandos:
 
 ```bash
@@ -43,4 +44,4 @@ Mostrará la lista de opciones con un pequeño resumen por opción.
 
 ## Instalar joomla en localhost
 
-Con el comando `make cypress_install` realiza una instalación de joomla en la versión y con los datos expecificados en el fichero `.env` 
+Con el comando `make install_joomla` realiza una instalación de joomla en la versión y con los datos expecificados en el fichero `.env` 

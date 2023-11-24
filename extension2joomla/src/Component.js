@@ -4,6 +4,7 @@ const { limpiarRuta, getNotEmptyFolderNames, sourcePath, destPath, releasePath }
 const { task, src, dest, series, watch } = require('gulp');
 const clean = require('gulp-clean');
 const GulpZip = require('gulp-zip');
+const fs = require('fs');
 
 class Component {
 
@@ -17,7 +18,13 @@ class Component {
         nombre = nombre.toLowerCase();
         this.rutaDesde = `${ruta}components/${nombre}/`;
         this.rutaSiteDesde = `${this.rutaDesde}site/`
-        this.rutaAdminDesde = `${this.rutaDesde}admin/`
+        let admin = 'admin';
+        // Carpeta admin
+        if (fs.existsSync(`${this.rutaDesde}administrator`)) {
+            admin = 'administrator';
+        }
+
+        this.rutaAdminDesde = `${this.rutaDesde}${admin}/`
         this.nombre = nombre;
         this.cNombre = capitalize(nombre);
 
@@ -35,6 +42,20 @@ class Component {
         let destinoRelease = limpiarRuta(releasePath);
         this.releaseDest = destinoRelease + 'components/' + this.nombre + '/';
 
+        if (getNotEmptyFolderNames(`${this.rutaSiteDesde}language/`)) {
+            this.siteLanguages = getNotEmptyFolderNames(`${this.rutaSiteDesde}language/`);
+            this.origenSiteLanguages = `${this.rutaSiteDesde}language/`
+        } else {
+            this.siteLanguages = getNotEmptyFolderNames(`${this.rutaSiteDesde}languages/`);
+            this.origenSiteLanguages = `${this.rutaSiteDesde}languages/`
+        }
+        if (getNotEmptyFolderNames(`${this.rutaAdminDesde}language/`)) {
+            this.adminLanguages = getNotEmptyFolderNames(`${this.rutaAdminDesde}language/`);
+            this.origenAdminLanguages = `${this.rutaAdminDesde}language/`
+        } else {
+            this.adminLanguages = getNotEmptyFolderNames(`${this.rutaAdminDesde}languages/`);
+            this.origenAdminLanguages = `${this.rutaAdminDesde}languages/`
+        }
     }
 
     get zipFileName() {
@@ -42,11 +63,10 @@ class Component {
     }
 
     get siteLanguageFileNames() {
-        let languages = getNotEmptyFolderNames(`${this.rutaSiteDesde}language/`)
-        if (languages === false)
+        if (this.siteLanguages === false)
             return false
         let langFiles = []
-        languages.forEach(l => {
+        this.siteLanguages.forEach(l => {
             langFiles.push(`${l}/com_${this.nombre}.ini`)
         })
 
@@ -54,9 +74,8 @@ class Component {
     }
 
     get adminLanguageFileNames() {
-        let languages = getNotEmptyFolderNames(`${this.rutaAdminDesde}language/`)
         let langFiles = [];
-        languages.forEach(l => {
+        this.adminLanguages.forEach(l => {
             langFiles.push(`${l}/com_${this.nombre}.ini`);    
             langFiles.push(`${l}/com_${this.nombre}.sys.ini`);    
         })
@@ -98,13 +117,17 @@ class Component {
         let siteLanguages = this.siteLanguageFileNames
         if (siteLanguages === false)
             return
-        let origen = siteLanguages.map(l => `${this.rutaJoomlaLanguageSite}${l}`);
-        task(`cleanComponent${this.cNombre}SiteLanguage`, () => {
-            return src(origen, { read:false, allowEmpty:true })
-            .pipe(clean({ force:true }))
-        })
+        
+        siteLanguages.forEach((l) => {
+            let origen = `${this.rutaJoomlaLanguageSite}${l}`;
 
-        this.cleanComponent.push(`cleanComponent${this.cNombre}SiteLanguage`);
+            task(`cleanComponent${this.cNombre}SiteLanguage${l}`, () => {
+                return src(origen, { read:false, allowEmpty:true })
+                .pipe(clean({ force:true }))
+            })
+    
+            this.cleanComponent.push(`cleanComponent${this.cNombre}SiteLanguage${l}`);
+        })
     }
 
     get cleanMediaFilesTask() {
@@ -128,14 +151,20 @@ class Component {
     }
 
     get cleanAdminLanguageTask() {
-        let origen = this.adminLanguageFileNames.map(l => `${this.rutaJoomlaLanguageAdmin}${l}`);
+        if (this.adminLanguageFileNames === false) {
+            return;
+        }
 
-        task(`cleanComponent${this.cNombre}AdminLanguage`, () => {
-            return src(origen, { read:false, allowEmpty:true })
-            .pipe(clean({ force:true }))
+        this.adminLanguageFileNames.forEach((l) => {
+            let origen = `${this.rutaJoomlaLanguageAdmin}${l}`;
+            
+            task(`cleanComponent${this.cNombre}AdminLanguage${l}`, () => {
+                return src(origen, { read:false, allowEmpty:true })
+                .pipe(clean({ force:true }))
+            })
+            
+            this.cleanComponent.push(`cleanComponent${this.cNombre}AdminLanguage${l}`);
         })
-
-        this.cleanComponent.push(`cleanComponent${this.cNombre}AdminLanguage`);
     }
 
     get cleanManifestFileTask() {
@@ -180,15 +209,18 @@ class Component {
 
         if (siteLanguages === false)
             return;
-        let destino = this.rutaJoomlaLanguageSite;
-        let origen  = siteLanguages.map(l => `${this.rutaSiteDesde}language/${l}`)
-
-        task(`copyComponent${this.cNombre}SiteLanguage`, series(`cleanComponent${this.cNombre}SiteLanguage`, () => {
-            return src(origen, { allowEmpty: true })
-            .pipe(dest(destino))
-        }))
-
-        this.copyComponent.push(`copyComponent${this.cNombre}SiteLanguage`);
+        
+        siteLanguages.forEach((l) => {
+            let origen = `${this.origenSiteLanguages}${l}`;
+            let lang = l.split('/')
+            let destino = `${this.rutaJoomlaLanguageSite}${lang[0]}/`;
+            task(`copyComponent${this.cNombre}SiteLanguage${l}`, series(`cleanComponent${this.cNombre}SiteLanguage${l}`, () => {
+                return src(origen, { allowEmpty: true })
+                .pipe(dest(destino))
+            }))
+    
+            this.copyComponent.push(`copyComponent${this.cNombre}SiteLanguage${l}`);
+        })
     }
 
     get copyMediaFilesTask() {
@@ -216,15 +248,21 @@ class Component {
     }
 
     get copyAdminLanguagesTask() {
-        let destino = this.rutaJoomlaLanguageAdmin;
-        let origen  = this.adminLanguageFileNames.map(l => `${this.rutaAdminDesde}language/${l}`)
+        if (this.adminLanguageFileNames === false) {
+            return;
+        }
 
-        task(`copyComponent${this.cNombre}AdminLanguage`, series(`cleanComponent${this.cNombre}AdminLanguage`, () => {
-            return src(origen, { allowEmpty: true })
-            .pipe(dest(destino))
-        }))
+        this.adminLanguageFileNames.forEach((l) => {
+            let origen = `${this.origenAdminLanguages}${l}`;
+            let lang = l.split('/');
+            let destino = `${this.rutaJoomlaLanguageAdmin}${lang[0]}/`;
+            task(`copyComponent${this.cNombre}AdminLanguage${l}`, series(`cleanComponent${this.cNombre}AdminLanguage${l}`, () => {
+                return src(origen, { allowEmpty: true })
+                .pipe(dest(destino))
+            }))
+            this.copyComponent.push(`copyComponent${this.cNombre}AdminLanguage${l}`);
+        })
 
-        this.copyComponent.push(`copyComponent${this.cNombre}AdminLanguage`);
     }
 
     get copyManifestFile() {
