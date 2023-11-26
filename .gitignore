@@ -13,7 +13,7 @@
 /test/cypress/fixtures/**
 !/.gitignore
 /releases/**
-/joomla/**
+/joomla_data/**
 /joomla_extensions
 !/joomla_extensions/extensions-config.json.dist
 !/joomla_extensions/components/foo/*
@@ -21,3 +21,4 @@
 extensions-config.json
 .gitignore_ortfeap
 .env
+.DS_Store
