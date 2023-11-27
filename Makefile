@@ -4,8 +4,14 @@ include .env
 OS := $(shell uname)
 ifeq ($(OS), Linux)
     # Reglas específicas para Linux
+	DOCKER_COMPOSE_APPEND := docker-compose.linux.yml
+	RANDOM_PORT_SUFFIX := $(shell shuf -i 100-999 -n 1)
+
 else ifeq ($(OS), Darwin)
     # Reglas específicas para macOS
+	DOCKER_COMPOSE_APPEND := docker-compose.mac.yml
+	RANDOM_PORT_SUFFIX := $(shell awk 'BEGIN {srand(); print int(100 + rand() * 900)}')
+
 else ifeq ($(OS), Windows_NT)
     # Reglas específicas para Windows
 else
@@ -51,7 +57,6 @@ CYAN=\033[36m
 AMARILLO=\033[1;33m
 
 # Crear puertos aleatorios
-RANDOM_PORT_SUFFIX := $(shell awk 'BEGIN {srand(); print int(100 + rand() * 900)}')
 MYSQL_PORT ?= 36${RANDOM_PORT_SUFFIX}
 JOOMLA_PORT ?= 37${RANDOM_PORT_SUFFIX}
 PHPMYADMIN_PORT ?= 38${RANDOM_PORT_SUFFIX}
@@ -101,7 +106,8 @@ check_docker_daemon:
     fi
 
 prueba:
-	echo ${DOCKER_COMPOSE_COMMAND}
+	@echo ${RANDOM_PORT_SUFFIX}
+	@echo ${OS}
 
 check_all: check_node check_docker check_docker_daemon
 
@@ -121,14 +127,14 @@ routes:
 	echo "\t\t${VERDE}http://localhost:$${PHPMYADMIN_PORT}${BLANCO}\n\n"
 
 up_containers: down
-	@${DOCKER_COMPOSE_COMMAND} up -d
+	@${DOCKER_COMPOSE_COMMAND} -f docker-compose.yml -f ${DOCKER_COMPOSE_APPEND} up -d
 
 down: check_all ## 		Para todos los contenedores (mysql, phpmyadmin y joomla)
 ifneq ($(JOOMLA_CONTAINER_EXISTS),)
 	@${DOCKER_COMPOSE_COMMAND} stop && ${DOCKER_COMPOSE_COMMAND} rm -f
 endif
 
-up: check_docker_daemon up_containers routes ## 		Levanta contenedores mysql, phpmyadmin y joomla
+up: check_docker_daemon up_containers check_joomla_installed routes ## 		Levanta contenedores mysql, phpmyadmin y joomla
 
 clean_installation: down
 	@if [ -n "$(shell docker volume ls -q -f name="${DB_VOLUMEN_NAME}")" ]; then \
@@ -159,3 +165,26 @@ pack_extensions: check_all ## 	Crea los ficheros de instalación de las extensio
 
 develop: ##		Empieza a desarrollar en tus extensiones (los cambios aplicados en tus extensiones serán aplicados en el árbol de ficheros de Joomla)
 	@gulp
+
+check_joomla_installed:
+	@if [ -f ./joomla_data/configuration.php ]; then \
+		exit 0; \
+	else \
+		$(MAKE) check_joomla_installation; \
+	fi;
+
+check_joomla_installation:
+	@echo -n "\n${VERDE}Instalando Joomla ${BLANCO}..."
+	@i=1; while [ $$i -le 40 ]; do \
+		if [ ! -d ./joomla_data/installation ] && [ -f ./joomla_data/configuration.php ]; then \
+			echo "\nSe ha instalado Joomla correctamente"; \
+			exit 0; \
+		fi; \
+		echo -n "."; \
+		i=$$((i + 1)); \
+		sleep 1; \
+	done; \
+	echo "\nHa habido algún problema en la instalación de Joomla"; \
+	exit 1; \
+
+

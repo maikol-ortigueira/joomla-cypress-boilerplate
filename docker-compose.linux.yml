@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+
+  joomla_cms:
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      - APACHE_RUN_USER=${CURRENT_USER}
+      - APACHE_RUN_GROUP=${CURRENT_GROUP}

@@ -43,8 +43,6 @@ services:
     volumes:
       - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini:ro
       - ./joomla_data:/var/www/html:rw,delegated
-      # - /etc/passwd:/etc/passwd:ro
-      # - /etc/group:/etc/group:ro
     environment:
       - JOOMLA_SITE_NAME=${JOOMLA_SITENAME}
       - JOOMLA_ADMIN_EMAIL=${SUPERUSER_EMAIL}
@@ -56,12 +54,9 @@ services:
       - JOOMLA_DB_NAME=${JOOMLA_DB_NAME}
       - JOOMLA_DB_HOST=joomladb
       - JOOMLA_DB_PREFIX=${JOOMLA_DB_PREFIX}
-      # - APACHE_RUN_USER=${CURRENT_USER}
-      # - APACHE_RUN_GROUP=${CURRENT_GROUP}
       - VIRTUAL_HOST=${JOOMLA_VIRTUAL_HOST}
     links:
       - joomladb:mysql
-    user: ${CURRENT_UID}
     
 volumes:
   mysql_db:
