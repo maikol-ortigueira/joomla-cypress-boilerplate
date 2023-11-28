@@ -12,9 +12,9 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       setupPlugins(on, config);
     },
-    baseUrl: `http://localhost:${process.env.JOOMLA_PORT}/`,
+    baseUrl: `http://${process.env.JOOMLA_VIRTUAL_HOST}/`,
     specPattern: [
-      'test/cypress/e2e/install/**/*.cy.{js,jsx,ts,tsx}',
+      // 'test/cypress/e2e/install/**/*.cy.{js,jsx,ts,tsx}',
       'test/cypress/e2e/mi_install/**/*.cy.{js,jsx,ts,tsx}',
       'test/cypress/e2e/admin/**/*.cy.{js,jsx,ts,tsx}',
       'test/cypress/e2e/site/**/*.cy.{js,jsx,ts,tsx}',

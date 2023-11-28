@@ -187,4 +187,6 @@ check_joomla_installation:
 	echo "\nHa habido algún problema en la instalación de Joomla"; \
 	exit 1; \
 
+cypress_open:
+	@npx cypress open
 

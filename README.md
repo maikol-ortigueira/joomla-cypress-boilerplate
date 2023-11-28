@@ -13,11 +13,11 @@
 
 ## Requisitos
 
-- SO Ubuntu 22.04, aunque no he realizado pruebas en otros sistemas operativos, pero probablemente funcione en MAC
+- SO Ubuntu 22.04, aunque no he realizado pruebas en otros sistemas operativos. Debería funcionar en MAC
 - Nodejs (https://nodejs.org/)
 - Make (https://www.gnu.org/software/make/)
 - Docker (https://docs.docker.com/desktop/)
-- docker-compose (https://docs.docker.com/compose/install/)
+- docker-compose (https://docs.docker.com/compose/install/). También funciona con "docker compose"
 
 ## Uso
 
@@ -42,6 +42,17 @@ make help
 
 Mostrará la lista de opciones con un pequeño resumen por opción.
 
-## Instalar joomla en localhost
+## Levantar servidor
 
-Con el comando `make install_joomla` realiza una instalación de joomla en la versión y con los datos expecificados en el fichero `.env` 
+Con el comando `make up` realiza una instalación de joomla en la versión y con los datos expecificados en el fichero `.env`. Para una primera prueba no es necesario modificar ningún dato del fichero `.env`
+
+## Posibles incidencias
+
+- Antes de levantar contenedores deberás comprobar que el puerto 80 de tu sistema está libre. Puedes comprobar con el siguiente comando en Ubuntu:
+```bash
+ss -ltn | grep ':80'`
+```
+
+## Testing
+
+Para realizar test e2e me he decidido por Cypress. Toda la información en [Cypress para joomla4testing](./test/README.md)
