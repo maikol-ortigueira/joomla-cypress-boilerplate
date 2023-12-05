@@ -13,7 +13,7 @@ services:
     container_name: ${DB_CONTAINER}
     restart: always
     ports:
-      - ${MYSQL_PORT}:3306
+      - ${JOOMLA_DB_PORT}:3306
     volumes:
       - mysql_db:/var/lib/mysql
     environment:
@@ -31,18 +31,24 @@ services:
       - "${PHPMYADMIN_PORT}:80"
     environment:
       - PMA_HOSTS=joomladb
+      - VIRTUAL_HOST=phpmyadmin.local
     links:
       - joomladb
 
   joomla_cms:
-    image: joomla:${JOOMLA_VERSION}-php${PHP_VERSION}-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - JOOMLA_VERSION=${JOOMLA_VERSION}
+        - PHP_VERSION=${PHP_VERSION}
     container_name: ${JOOMLA_CONTAINER}
     restart: always
     ports:
       - "${JOOMLA_PORT}:80"
     volumes:
-      - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini:ro
       - ./joomla_data:/var/www/html:rw,delegated
+      - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini
     environment:
       - JOOMLA_SITE_NAME=${JOOMLA_SITENAME}
       - JOOMLA_ADMIN_EMAIL=${SUPERUSER_EMAIL}

@@ -12,6 +12,15 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/gulpfile.js"
+        },        
+        {
+            "name": "Listen for XDebug Joomla",
+            "type": "php",
+            "request": "launch",
+            "port": 9000,
+            "pathMappings": {
+                "/var/www/html/": "${workspaceFolder}/joomla_data/"
+            }
         }
     ]
 }

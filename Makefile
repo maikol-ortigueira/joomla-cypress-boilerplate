@@ -190,3 +190,5 @@ check_joomla_installation:
 cypress_open:
 	@npx cypress open
 
+shell:
+	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} /bin/bash
