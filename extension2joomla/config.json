@@ -2,5 +2,6 @@
     "extName": "foo",
     "srcDir": "../joomla_extensions",
     "destDir": "../joomla_data",
-    "releaseDir": "../releases/mi_code"
+    "releaseDir": "../releases/mi_code",
+    "packageDir": "../mi_package"
 }

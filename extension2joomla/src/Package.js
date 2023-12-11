@@ -1,75 +1,126 @@
-const { hasComponents, getComponentsNames, hasFiles, getFilesNames, hasPlugins, getPlugins, hasTemplates, getTemplates, limpiarRuta, hasModules, getModules, getPackageName, getDefault, getFecha, hasLibraries, getLibrariesNames, sourcePath, releasePath, destPath } = require("./utils");
+const {
+    hasComponents,
+    getComponentsNames,
+    hasFiles,
+    getFilesNames,
+    hasPlugins,
+    getPlugins,
+    hasTemplates,
+    getTemplates,
+    limpiarRuta,
+    hasModules,
+    getModules,
+    getPackageName,
+    getDefault,
+    getFecha,
+    hasLibraries,
+    getLibrariesNames,
+    sourcePath,
+    packagePath,
+    releasePath } = require("./utils");
 const Component = require("./Component");
 const Archivo = require("./Archivo")
-const js2xml = require('js2xmlparser');
 const Plugin = require('./Plugin');
 const Template = require("./Template");
-const {  writeFileSync } = require("fs");
+const Modulo = require("./Modulo");
+const Library = require("./Library");
+const js2xml = require('js2xmlparser');
+const { writeFileSync } = require("fs");
 const { task, src, series, dest } = require("gulp");
 const gulpClean = require("gulp-clean");
 const GulpZip = require("gulp-zip");
-const Modulo = require("./Modulo");
-const Library = require("./Library");
+const fs = require("fs");
 
 
 class Package {
 
     constructor() {
         this.package = getPackageName();
-        this.nombre = this.package.name.toLowerCase();
-        this.extensionVersion = '4.0';
-        this.name = `PKG_${this.nombre.toUpperCase()}`
-        this.author = getDefault(this.package.author, 'Maikol Fustes')
+        this.xml2 = { "@": { "type": "package", "method": "upgrade" } };
+        this.sourcePath = sourcePath.charAt(sourcePath.length - 1) == '/' ? sourcePath : sourcePath + '/';
+        this.releasePath = releasePath.charAt(releasePath.length - 1) == '/' ? releasePath : releasePath + '/';
+        this.destPath = packagePath.charAt(packagePath.length - 1) == '/' ? packagePath : packagePath + '/';
+        this.tmpPath = `${this.destPath}tmp/`;
+        this.setPackageData();
+
+        // let destino = destPath.charAt(destPath.length - 1) == '/' ? destPath : destPath + '/';
+        // this.destino = destino
+
+        this.setExtensions();
+        this.getUpdateServers();
+    }
+
+    setPackageData() {
+        this.packagename = this.package.name.toLowerCase();
+        // remove packageName spaces
+        this.packagename = this.packagename.replace(/\s/g, '');
+        this.xml2.name = `PKG_${this.packagename.toUpperCase()}`
+        this.xml2.packagename = this.packagename;
+        this.xml2.author = getDefault(this.package.author, 'Maikol Fustes')
+
+        // creation date
         let fechaHoy = getFecha();
         let mesAnoHoy = `${fechaHoy.mes} ${fechaHoy.ano}`
-        this.creationDate = getDefault(this.package.creationDate, mesAnoHoy);
-        this.packagename = getDefault(this.package.packagename, this.package.name)
-        this.version = getDefault(this.package.version, '1.0.0')
-        this.description = `PKG_${this.nombre.toUpperCase()}_DESC`;
-        this.files = [];
-        this.zipFiles = [];
-        this.copyPackage = [];
-        let ruta = limpiarRuta(sourcePath);
+        this.xml2.creationDate = getDefault(this.package.creationDate, mesAnoHoy);
+        this.version = getDefault(this.package.version, '1.0.0');
+        this.xml2.version = this.version;
+        this.xml2.copyright = getDefault(this.package.copyRight, `Copyright (c) ${this.author}. All rights reserved.`);
+        this.xml2.license = getDefault(this.package.license, 'https://www.gnu.org/copyleft/gpl.html GNU/GPL');
+        this.xml2.description = `PKG_${this.packagename.toUpperCase()}_DESC`;
+        // if hasScriptFile, add scriptfile to xml2
+        if (this.hasScriptFile() !== false) {
+            this.xml2.scriptfile = "script.php";
+        }
+    }
 
-        let destinoRelease = releasePath.charAt(releasePath.length - 1) == '/' ? releasePath : releasePath + '/';
-        this.releaseDest = destinoRelease + 'packages/' + this.nombre + '/';
-
-        let destino = destPath.charAt(destPath.length - 1) == '/' ? destPath : destPath + '/';
-        this.destino = destino
-
+    setComponents() {
         if (hasComponents) {
             let components = getComponentsNames();
-            
-            components.forEach(name => {
-                let comp = new Component(name);
-                this.zipFiles.push(`${comp.releaseDest}${comp.zipFileName}`)
-                this.files.push(this.parseElementFile('component', `com_${name}`, comp.zipFileName));
-            })
-        }
 
+            components.forEach(name => {
+                this.xml2.files.folder.push({
+                    "@": {
+                        type: 'component',
+                        id: `com_${name}`
+                    },
+                    "#": `com_${name}`
+                });
+
+                // add component to extensions array
+                this.extensions.push({
+                    name: `com_${name}`,
+                    from: `${this.sourcePath}components/${name}/`,
+                });
+            });
+        }
+    }
+
+    setFiles() {
         if (hasFiles) {
             let archivos = getFilesNames();
 
-             archivos.forEach(name => {
-                 let f = new Archivo(name);
-                 this.zipFiles.push(`${f.releaseDest}${f.zipFileName}`);
-                 this.files.push(this.parseElementFile('file', name, f.zipFileName));
-             })
+            archivos.forEach(name => {
+                let f = new Archivo(name);
+                this.zipFiles.push(`${f.releaseDest}${f.zipFileName}`);
+                this.files.push(this.parseElementFile('file', name, f.zipFileName));
+            })
         }
+    }
 
+    setTemplates() {
         if (hasTemplates) {
             let templates = getTemplates();
-
-                if (templates.length > 0) {
-                    templates.forEach(name => {
-                        let template = new Template(name)
-                        this.zipFiles.push(`${template.releaseDest}${template.zipFileName}`)
-                        this.files.push(this.parseElementFile('template', `tmpl_${name}`, template.zipFileName))
-                    })
-                }
-
+            if (templates.length > 0) {
+                templates.forEach(name => {
+                    let template = new Template(name)
+                    this.zipFiles.push(`${template.releaseDest}${template.zipFileName}`)
+                    this.files.push(this.parseElementFile('template', `tmpl_${name}`, template.zipFileName))
+                })
+            }
         }
+    }
 
+    setLibraries() {
         if (hasLibraries()) {
             let libraries = getLibrariesNames();
 
@@ -78,8 +129,10 @@ class Package {
                 this.zipFiles.push(`${lib.releaseDest}${lib.zipFileName}`)
                 this.files.push(this.parseElementFile('library', `lib_${name}`, lib.zipFileName))
             })
-        } 
+        }
+    }
 
+    setPlugins() {
         if (hasPlugins) {
             let groups = getPlugins();
 
@@ -87,14 +140,29 @@ class Package {
                 let plugins = groups[type];
                 if (plugins.length > 0) {
                     plugins.forEach(name => {
-                        let p = new Plugin(name, type);
-                        this.zipFiles.push(`${p.releaseDest}${p.zipFileName}`);
-                        this.files.push(this.parsePluginElementFile(name, p.zipFileName, type))
+                        this.xml2.files.folder.push(
+                            {
+                                "@": {
+                                    type: 'plugin',
+                                    id: `plg_${type}_${name}`,
+                                    group: type
+                                },
+                                "#": `plg_${type}_${name}`
+                            }
+                        );
+
+                        // add plugin to extensions array
+                        this.extensions.push({
+                            name: `plg_${type}_${name}`,
+                            from: `${this.sourcePath}plugins/${type}/${name}/`,
+                        });
                     })
                 }
             }
         }
+    }
 
+    setModules() {
         if (hasModules) {
             let clients = getModules()
 
@@ -102,163 +170,200 @@ class Package {
                 let modules = clients[client]
                 if (modules.length > 0) {
                     modules.forEach(name => {
-                        let m = new Modulo(name, client)
-                        this.zipFiles.push(`${m.releaseDest}${m.zipFileName}`)
-                        this.files.push(this.parseModuleElementFile(name, m.zipFileName, client))
+                        this.xml2.files.folder.push(
+                            {
+                                "@": {
+                                    type: 'module',
+                                    id: `mod_${name}`,
+                                    client: client
+                                },
+                                "#": `mod_${name}`
+                            }
+                        )
                     })
                 }
             }
         }
     }
 
-    parseElementFile (type, id, content) {
-        let element = {
-            "@": {
-                type: type,
-                id: id
-            },
-            "#": content
+    setExtensions() {
+        this.xml2.files = {};
+        this.xml2.files.folder = [];
+        this.extensions = [];
+        this.setComponents();
+        // this.setFiles();
+        // this.setLibraries();
+        this.setPlugins();
+        this.setModules();
+        // this.setTemplates();
+    }
+
+    hasScriptFile() {
+        // check if script.php exists in package folder
+        let scriptFile = `${this.sourcePath}package/${this.packagename}/script.php`;
+        if (fs.existsSync(scriptFile)) {
+            return true;
         }
-
-        return element;
+        return false;
     }
 
-    parsePluginElementFile (id, content, group) {
-        let element = {
-            "@": {
-                type: 'plugin',
-                id: id,
-                group: group
-            },
-            "#": content
+    getScriptFile() {
+        // check if script.php exists in package folder
+        let scriptFile = `${this.sourcePath}package/${this.packagename}/script.php`;
+        if (fs.existsSync(scriptFile)) {
+            return scriptFile;
         }
-
-        return element;
+        return false;
     }
 
-    parseModuleElementFile (id, content, client) {
-        return this.parseClientElementFile(id, content, client, 'module');
-    }
+    getUpdateServers() {
+        // check if updateservers exists & length > 0
+        if (this.package.hasOwnProperty('updateServers') && this.package.updateServers.length > 0) {
+            let priority = 1;
+            // if package dlid prefix or suffix exists, add it to xml2
+            if (this.package.hasOwnProperty('dlid')) {
+                let prefix = "", suffix = "";
+                // if prefix or suffix exists, add it to xml2
+                if (this.package.dlid.hasOwnProperty('prefix')) {
+                    prefix = this.package.dlid.prefix;
+                }
+                if (this.package.dlid.hasOwnProperty('suffix')) {
+                    suffix = this.package.dlid.suffix;
+                }
 
-    parseTemplateElementFile (id, content) {
-        return this.parseClientElementFile(id, content, client, 'template');
-    }
+                if (prefix != "" || suffix != "") {
+                    let content = {};
+                    if (prefix !== "") {
+                        content.prefix = prefix;
+                    }
 
-    parseClientElementFile (id, content, client, type) {
-        let element = {
-            "@": {
-                type: type,
-                id: id,
-                client: client
-            },
-            "#": content
+                    if (suffix !== "") {
+                        content.suffix = suffix;
+                    }
+
+                    this.xml2.dlid = {"@": content};
+                }
+            }
+                
+            this.xml2.updateservers = {};
+            this.xml2.updateservers.server = [];
+            this.package.updateServers.forEach(s => {
+                // add extra query if exists to url
+                if (s.hasOwnProperty('extra_query')) {
+                    s.url = `${s.url}?${s.extra_query}`;
+                }
+
+                let obj = {
+                    "@": {
+                        type: "extension",
+                        priority: priority,
+                        name: s.name,
+                    },
+                    "#": s.url,
+                };
+                this.xml2.updateservers.server.push(obj);
+                priority++;
+            });
         }
-
-        return element;
+        return false;
     }
 
-    get manifestFileName () {
-        return `pkg_${this.nombre}.xml`;
+    get manifestData() {
+        return js2xml.parse("extension", this.xml2);
     }
 
     get zipFileName() {
-        return `pkg_${this.nombre}.v${this.version}.zip`;
+        return `pkg_${this.packagename}.v${this.version}.zip`;
     }
-
-    get xml() {
-        let xml = {
-            "@": {
-                type: "package",
-                version: this.extensionVersion,
-                method: "upgrade"
-            },
-            name: this.name,
-            author: this.author,
-            creationDate: this.creationDate,
-            packagename: this.packagename,
-            version: this.version,
-            description: this.description,
-            files: {
-                "@": {
-                    folder: "packages"
-                }, 
-                file: [
-                    this.files
-                ]
-            }
-        }
-        return js2xml.parse("extension", xml)
-    }
-
-    // makeManifestFile() {
-    //     let filename = `${this.destino}${this.manifestFileName}`
-    //     if (!existsSync(this.destino)) {
-    //         mkdirSync(this.destino);
-    //     }
-    //     writeFileSync(filename, this.xml);
-    // }
 
     // gulp tasks
     get cleanTask() {
-        let destino = this.destino;
+        let destino = this.releasePath;
 
-        task(`cleanPackage`, function() {
+        task(`cleanPackage`, function () {
             return src(destino, { read: false, allowEmpty: true })
-            .pipe(gulpClean({ force: true }))
+                .pipe(gulpClean({ force: true }))
         })
 
         return `cleanPackage`;
     }
 
     get copyTask() {
-        this.copyZipFilesTask;
+        this.copyTmpFilesTask;
         this.copyManifestFile;
+        this.copyScriptFileTask;
 
-        task(`copyPackage`, series(...this.copyPackage));
-
+        task(`copyPackage`, series(...this.copyPackageTmp, 'copyScriptFile'));
         return `copyPackage`;
     }
 
-    get copyZipFilesTask() {
-        let files = this.zipFiles;
+    get copyTmpFilesTask() {
+        this.copyPackageTmp = [];
+        if (this.extensions.length > 0) {
+            this.extensions.forEach(e => {
+                let desde = e.from + '**';
+                let destino = this.tmpPath + e.name;
 
-        if (files.length > 0) {
-            let destino = this.destino + 'packages/';
-            
-            task(`copyZipFiles`,  function() {
-                return src(files, { allowEmpty: true })
-                .pipe(dest(destino))
+                task(`copyTmp${e.name}`, function () {
+                    return src(desde)
+                        .pipe(dest(destino))
+                })
+                this.copyPackageTmp.push(`copyTmp${e.name}`);
             })
-            
-            this.copyPackage.push(`copyZipFiles`);
         }
     }
 
+    get copyScriptFileTask() {
+        let scriptFile = this.getScriptFile();
+        if (scriptFile !== false) {
+            let desde = scriptFile;
+            let destino = this.tmpPath;
+
+            task(`copyScriptFile`, function () {
+                return src(desde)
+                    .pipe(dest(destino))
+            })
+        } else {
+            // return empty task
+            task(`copyScriptFile`, function (cb) { 
+                cb();
+            })
+        }
+        return 'copyScriptFile';
+    }
+
     get copyManifestFile() {
-        let manifestFileName = `../${this.manifestFileName}`;
-        writeFileSync(manifestFileName, this.xml)
-        let destino = this.destino;
-
-        task(`copyPackageManifest`, function() {
-            return src(manifestFileName)
-            .pipe(dest(destino))
-        })
-
-        this.copyPackage.push(`copyPackageManifest`);
+        // if destination folder doesn't exist, create it
+        if (!fs.existsSync(this.tmpPath)) {
+            fs.mkdirSync(this.tmpPath, { recursive: true });
+        }
+        let destino = `${this.tmpPath}pkg_${this.packagename}.xml`;
+        writeFileSync(destino, this.manifestData)
     }
 
     get releaseTask() {
-        let desde = this.destino + '/**';
-        let destino = this.releaseDest;
+        let desde = this.tmpPath + '**';
+        let destino = this.destPath;
+        let destino2 = `${this.releasePath}packages/${this.packagename}/`;
         let filename = this.zipFileName;
-
-        task(`releasePackage`, function () {
+        task(`releaseTmpPackage`, function () {
             return src(desde)
-            .pipe(GulpZip(filename))
-            .pipe(dest(destino))
+                .pipe(GulpZip(filename))
+                .pipe(dest(destino))
+                .pipe(dest(destino2))
         })
 
-        return `releasePackage`;
+        return `releaseTmpPackage`;
+    }
+
+    get cleanTmpFolderTask() {
+        let destino = this.tmpPath;
+        task(`cleanTmpFolder`, function () {
+            return src(destino, { read: false, allowEmpty: true })
+                .pipe(gulpClean({ force: true }))
+        })
+
+        return `cleanTmpFolder`;
     }
 }
 

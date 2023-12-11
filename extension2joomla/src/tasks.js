@@ -64,9 +64,9 @@ if (utils.hasFiles()) {
     // backupTasks.push('backupFiles');
 }
 
-if (utils.hasPackages()) {
+if (utils.hasPackage()) {
     let pkg = new Package();
-    releasePackage = series(pkg.cleanTask, pkg.copyTask, pkg.releaseTask)
+    releasePackage = series(pkg.cleanTask, pkg.copyTask, pkg.releaseTask, pkg.cleanTmpFolderTask)
 }
 
 if (utils.hasLibraries()) {

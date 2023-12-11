@@ -1,15 +1,17 @@
 {
-    "components": ["foo"],
+    "components": [],
     "plugins": {
-        "extension": [""],
         "system": [],
-        "user": [""]
+        "webservices": [],
     },
     "modules": {
-        "site": [""],
+        "site": [],
         "admin": []
     },
-    "templates": [""],
+    "templates": {
+        "site": [],
+        "admin": []
+    },
     "libraries": [""],
     "files": [],
     "package": {
@@ -19,6 +21,17 @@
         "label": "",
         "description": "",
         "version": "",
-        "author": ""
+        "author": "",
+        "dlid": {
+            "prefix": "",
+            "suffix": ""
+        },
+        "updateServers": [
+            {
+                "url":"",
+                "extra_query":"",
+                "name":""
+            }
+        ]
     }
 }

@@ -2,13 +2,15 @@ const {
     extName,
     srcDir,
     destDir,
-    releaseDir
+    releaseDir,
+    packageDir,
 } = require('../config.json');
 
 const path = require('path');
 const sourcePath = path.join(__dirname, `../${srcDir}`); 
 const destPath = path.join(__dirname, `../${destDir}`);
 const releasePath = path.join(__dirname, `../${releaseDir}`);
+const packagePath = path.join(__dirname, `../${packageDir}`);
 
 var fs = require('fs'),
     xmlQuery = require('xml-query'),
@@ -82,16 +84,16 @@ const hasFiles = () => {
 const getFilesNames = () => {
     return extConfig.files;
 }
-
-const hasPackages = () => {
+// Existen packages
+const hasPackage = () => {
     return (
         extConfig.hasOwnProperty('package') &&
-        extConfig.package.name != ''
+        extConfig.package != ''
     );
 }
 
 const getPackageName = () => {
-    if (hasPackages()) {
+    if (hasPackage()) {
         return extConfig.package;
     }
     return false;
@@ -287,7 +289,7 @@ module.exports = {
     getLibrariesNames,
     hasFiles,
     getFilesNames,
-    hasPackages,
+    hasPackage,
     getPackageName,
     hasPlugins,
     getPlugins,
@@ -305,5 +307,6 @@ module.exports = {
     getNotEmptyFolderNames,
     sourcePath,
     destPath,
-    releasePath
+    releasePath,
+    packagePath,
 }
