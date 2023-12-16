@@ -1,11 +1,11 @@
 const { defineConfig } = require('cypress');
-const setupPlugins = require('./test/cypress/plugins/index');
+const setupPlugins = require('./tests/cypress/plugins/index');
 require('dotenv').config();
 
 module.exports = defineConfig({
-  fixturesFolder: 'test/cypress/fixtures',
-  videosFolder: 'test/cypress/output/videos',
-  screenshotsFolder: 'test/cypress/output/screenshots',
+  fixturesFolder: 'tests/cypress/fixtures',
+  videosFolder: 'tests/cypress/output/videos',
+  screenshotsFolder: 'tests/cypress/output/screenshots',
   viewportHeight: 1000,
   viewportWidth: 1200,
   e2e: {
@@ -14,14 +14,14 @@ module.exports = defineConfig({
     },
     baseUrl: `http://${process.env.JOOMLA_VIRTUAL_HOST}/`,
     specPattern: [
-      // 'test/cypress/e2e/install/**/*.cy.{js,jsx,ts,tsx}',
-      'test/cypress/e2e/mi_install/**/*.cy.{js,jsx,ts,tsx}',
-      'test/cypress/e2e/admin/**/*.cy.{js,jsx,ts,tsx}',
-      'test/cypress/e2e/site/**/*.cy.{js,jsx,ts,tsx}',
-      'test/cypress/e2e/api/**/*.cy.{js,jsx,ts,tsx}',
-      'test/cypress/e2e/plugins/**/*.cy.{js,jsx,ts,tsx}',
+      // 'tests/cypress/e2e/install/**/*.cy.{js,jsx,ts,tsx}',
+      'tests/cypress/e2e/mi_install/**/*.cy.{js,jsx,ts,tsx}',
+      'tests/cypress/e2e/admin/**/*.cy.{js,jsx,ts,tsx}',
+      'tests/cypress/e2e/site/**/*.cy.{js,jsx,ts,tsx}',
+      'tests/cypress/e2e/api/**/*.cy.{js,jsx,ts,tsx}',
+      'tests/cypress/e2e/plugins/**/*.cy.{js,jsx,ts,tsx}',
     ],
-    supportFile: 'test/cypress/support/e2e.js',
+    supportFile: 'tests/cypress/support/e2e.js',
     scrollBehavior: 'center',
     browser: 'firefox',
     screenshotOnRunFailure: true,

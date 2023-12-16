@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "cypress:install": "cypress install",
-    "cypress:open": "cypress open --e2e -b firefox",
+    "cypress:open": "cypress open --e2e -b chrome",
     "cypress:run": "cypress run"
   },
   "keywords": [],

@@ -50,6 +50,8 @@ services:
     volumes:
       - ./joomla_data:/var/www/html:rw,delegated
       - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini
+      - ./tests:/var/www/html/tests
+      - ./phpunit.xml:/var/www/html/phpunit.xml
     environment:
       - JOOMLA_SITE_NAME=${JOOMLA_SITENAME}
       - JOOMLA_ADMIN_EMAIL=${SUPERUSER_EMAIL}

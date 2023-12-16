@@ -21,3 +21,4 @@ extensions-config.json
 .gitignore_ortfeap
 .env
 .DS_Store
+src/

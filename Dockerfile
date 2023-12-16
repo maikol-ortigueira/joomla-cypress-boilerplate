@@ -11,6 +11,12 @@ RUN apt-get update && apt-get install -y \
     libmemcached-dev \
     && docker-php-ext-install zip
 
+# Instala php-cli
+# RUN apt-get install -y php-cli
+
 # Instala Imagick, Xdebug y Memcached
-RUN pecl install imagick xdebug memcached \
-    && docker-php-ext-enable imagick xdebug memcached
+RUN pecl install imagick xdebug memcached pcov \
+    && docker-php-ext-enable imagick xdebug memcached pcov
+
+# Instala Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
