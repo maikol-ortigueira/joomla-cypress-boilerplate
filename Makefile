@@ -193,11 +193,11 @@ cypress_open:
 shell:
 	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} /bin/bash
 
-unit_tests: check_phpunit check_pest ## 		Ejecuta los tests unitarios
+unit_tests: check_pest ## 		Ejecuta los tests unitarios
 	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} php vendor/bin/pest
 
 check_phpunit:
 	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} sh -c 'composer show phpunit/phpunit > /dev/null 2>&1 || composer require --dev phpunit/phpunit'
 
 check_pest:
-	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} sh -c 'composer show pestphp/pest > /dev/null 2>&1 || composer require --dev pestphp/pest --with-all-dependencies'
+	@docker exec -it --user ${CURRENT_UID} ${JOOMLA_CONTAINER} sh -c 'composer show pestphp/pest > /dev/null 2>&1 || composer update'

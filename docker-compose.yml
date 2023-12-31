@@ -52,6 +52,7 @@ services:
       - ./custom_php.ini:/usr/local/etc/php/conf.d/custom_php.ini
       - ./tests:/var/www/html/tests
       - ./phpunit.xml:/var/www/html/phpunit.xml
+      - ./composer.json:/var/www/html/composer.json
     environment:
       - JOOMLA_SITE_NAME=${JOOMLA_SITENAME}
       - JOOMLA_ADMIN_EMAIL=${SUPERUSER_EMAIL}
@@ -66,6 +67,12 @@ services:
       - VIRTUAL_HOST=${JOOMLA_VIRTUAL_HOST}
     links:
       - joomladb:mysql
+
+    # MacOS and Windows have this by default, this hack also allows it for Linux
+    extra_hosts:
+      docker.for.lin.host.internal: 172.16.158.1
+      host.docker.internal: host-gateway
+
     
 volumes:
   mysql_db:
