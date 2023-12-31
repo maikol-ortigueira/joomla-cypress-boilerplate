@@ -87,8 +87,9 @@ const getFilesNames = () => {
 // Existen packages
 const hasPackage = () => {
     return (
-        extConfig.hasOwnProperty('package') &&
-        extConfig.package != ''
+        extConfig.hasOwnProperty('package')
+        && extConfig.package !== ''
+        && extConfig.package.name != ''
     );
 }
 
