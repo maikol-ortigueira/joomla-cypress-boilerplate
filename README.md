@@ -46,11 +46,51 @@ Mostrará la lista de opciones con un pequeño resumen por opción.
 
 Con el comando `make up` realiza una instalación de joomla en la versión y con los datos expecificados en el fichero `.env`. Para una primera prueba no es necesario modificar ningún dato del fichero `.env`
 
+## Desarrollo de extensiones Joomla
+
+Para el desarrollo de extensiones Joomla! deberás preparar tu entorno teniendo en cuenta lo siguiente:
+
+* Tus extensiones deben estar ubicadas en la carpeta `/joomla_extensions/`
+* La estructura de ficheros dentro de esta carpeta será el siguiente:
+
+```bash
+.
+├── components
+│   └── <com_name>
+│       ├── admin
+│       │   ├── access.xml
+│       │   ├── config.xml
+│       │   ├── forms
+│       │   ├── language
+│       │   ├── layouts
+│       │   ├── services
+│       │   ├── sql
+│       │   ├── src
+│       │   └── tmpl
+│       ├── media
+│       │   ├── css
+│       │   ├── images
+│       │   ├── joomla.asset.json
+│       │   └── js
+│       ├── <com_name>.xml
+│       └── site
+│           ├── layouts
+│           ├── src
+│           └── tmpl
+└── plugins
+    └── <plugin_group>
+        └── <plugin_name>
+            ├── language
+            ├── services
+            ├── src
+            └── <plugin_name>.xml
+```
+
 ## Posibles incidencias
 
 - Antes de levantar contenedores deberás comprobar que el puerto 80 de tu sistema está libre. Puedes comprobar con el siguiente comando en Ubuntu:
 ```bash
-ss -ltn | grep ':80'`
+ss -ltn | grep ':80'
 ```
 
 ## Testing
