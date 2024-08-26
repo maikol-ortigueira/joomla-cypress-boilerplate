@@ -32,8 +32,8 @@ class Modulo {
         this.rutaCliente = this.cliente === 'site' ? '' : 'administrator/';
         let rutaJoomla = limpiarRuta(destPath);
 
-        this.rutaJoomlaMod = `${rutaJoomla}${this.rutaCliente}modules/mod_${this.nombre}/`;
-        this.rutaJoomlaMedia = `${rutaJoomla}media/mod_${this.nombre}/`;
+        this.rutaJoomlaMod = `${rutaJoomla}${this.rutaCliente}modules/${this.nombre}/`;
+        this.rutaJoomlaMedia = `${rutaJoomla}media/${this.nombre}/`;
 
         let destinoRelease = limpiarRuta(releasePath);
         this.releaseDest = destinoRelease + 'modules/' + this.cliente + '/' + this.nombre + '/';
@@ -75,7 +75,7 @@ class Modulo {
     }
 
     get cleanManifestFileTask() {
-        let cleanPath = `${this.rutaJoomlaMod}mod_${this.nombre}.xml`;
+        let cleanPath = `${this.rutaJoomlaMod}${this.nombre}.xml`;
         task(`cleanModule${this.cCliente}${this.cNombre}Manifest`, () =>{
             return src(cleanPath, { read:false, allowEmpty:true })
                 .pipe(clean({ force:true }))
@@ -124,7 +124,7 @@ class Modulo {
 
     get copyManifestFileTask() {
         let destino = this.rutaJoomlaMod;
-        let origen = `${this.rutaDesde}mod_${this.nombre}.xml`
+        let origen = `${this.rutaDesde}${this.nombre}.xml`
 
         task(`copyModule${this.cCliente}${this.cNombre}Manifest`, series(`cleanModule${this.cCliente}${this.cNombre}Manifest`, () => {
             return src(origen, { allowEmpty: true })

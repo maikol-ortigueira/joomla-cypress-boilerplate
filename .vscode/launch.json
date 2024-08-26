@@ -20,7 +20,8 @@
             "port": 9000,
             "pathMappings": {
                 "/var/www/html/": "${workspaceFolder}/joomla_data/"
-            }
+            },
+            "log": true
         }
     ]
 }
