@@ -37,11 +37,11 @@ class Manifest {
             case 'libraries':
             case 'files':
             case 'templates':
-                tipo = tipo + '/' + nombre + '/';
+                tipo = tipo + '/' + grupo.toLowerCase() + '/' + nombre + '/';
                 break;
         }
 
-        this.filename = this.tipo == 'templates' ? ruta + 'templates/' + nombre + '/' + 'templateDetails.xml' : ruta + tipo + nombre + '.xml';
+        this.filename = this.tipo == 'templates' ? ruta + tipo + '/' + 'templateDetails.xml' : ruta + tipo + nombre + '.xml';
 
         let archivoManifiesto = fs.readFileSync(this.filename, 'utf-8');
 

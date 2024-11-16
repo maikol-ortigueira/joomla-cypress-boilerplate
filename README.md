@@ -77,13 +77,26 @@ Para el desarrollo de extensiones Joomla! deberás preparar tu entorno teniendo 
 │           ├── layouts
 │           ├── src
 │           └── tmpl
-└── plugins
-    └── <plugin_group>
-        └── <plugin_name>
+├── plugins
+│   └── [ system|user|content|... ]
+│       └── <plugin_name>
+│           ├── language
+│           ├── services
+│           ├── src
+│           └── <plugin_name>.xml
+└── templates
+    └── [ admin|site ]
+        └── <template_name>
+            ├── media
             ├── language
-            ├── services
-            ├── src
-            └── <plugin_name>.xml
+            ├── component.php
+            ├── error.php
+            ├── index.php
+            ├── joomla.asset.json
+            ├── offline.php
+            ├── template_preview.png
+            ├── template_thumbnail.png
+            └── templaDetails.xml
 ```
 
 ## Posibles incidencias

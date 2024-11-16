@@ -4,6 +4,7 @@ const capitalize = require("capitalize");
 const { task, src, dest, series, watch } = require("gulp");
 const clean = require('gulp-clean');
 const GulpZip = require("gulp-zip");
+const path = require('path');
 
 class Template {
     
@@ -14,9 +15,9 @@ class Template {
         let ruta = limpiarRuta(sourcePath);
         nombre = nombre.toLowerCase();
         this.cliente = cliente.toLowerCase() === 'site' ? 'site' : 'admin';
-        this.rutaDesde = `${ruta}templates/${nombre}/`;
+        this.rutaDesde = `${ruta}templates/${this.cliente}/${nombre}/`;
         this.rutaLanguagesDesde = `${this.rutaDesde}language/`;
-        this.rutaMediaDesde = `${this.rutaDesde}/media/`;
+        this.rutaMediaDesde = `${this.rutaDesde}media/`;
         this.nombre = nombre;
         this.cNombre = capitalize(nombre);
         
@@ -29,13 +30,13 @@ class Template {
         this.rutaMediaCliente = cliente.toLowerCase() === 'site' ? 'site/' : 'administrator/';
         this.rutaJoomlaTmp = `${rutaJoomla}${this.rutaCliente}templates/${this.nombre}/`
         this.rutaJoomlaMedia = `${rutaJoomla}media/templates/${this.rutaMediaCliente}${this.nombre}/`
-        this.rutaJoomlaLanguage = `${rutaJoomla}language/`;
+        this.rutaJoomlaLanguage = `${rutaJoomla}${this.rutaCliente}language/`;
 
         let destinoRelease = limpiarRuta(releasePath);
-        this.releaseDest = destinoRelease + 'templates/' + this.nombre + '/';
+        this.releaseDest = `${destinoRelease}templates/${this.cliente}/${this.nombre}/`;
     }
     get zipFileName() {
-        return `tpl_${this.nombre}.v${this.version}.zip`;
+        return `tpl_${this.cliente}_${this.nombre}.v${this.version}.zip`;
     }
 
     get languageFileNames() {
@@ -52,7 +53,7 @@ class Template {
     // clean tasks
     get cleanTask() {
         this.cleanMediaTask;
-        //this.cleanLanguageTask;
+        this.cleanLanguageTask;
         this.cleanTemplateFilesTask;
         this.cleanManifestFileTask;
 
@@ -104,7 +105,7 @@ class Template {
     // copy tasks
     get copyTask() {
         this.copyMediaTask;
-        //this.copyLanguageTask;
+        this.copyLanguageTask;
         this.copyTemplateFilesTask;
         this.copyManifestFileTask;
 
@@ -126,13 +127,16 @@ class Template {
     }
 
     get copyLanguageTask() {
-        let destino = this.rutaJoomlaLanguage;
+        let destinoBase = this.rutaJoomlaLanguage;
         let origen = this.languageFileNames.map(l => `${this.rutaLanguagesDesde}${l}`)
 
         task(`copyTemplate${this.cNombre}Language`, series(`cleanTemplate${this.cNombre}Language`, () => {
             return src(origen, { allowEmpty: true })
-            .pipe(dest(destino))
-        }))
+                .pipe(dest(file => {
+                    let filename = path.basename(path.dirname(file.path));
+                    return path.join(destinoBase, filename);
+                }));
+        }));
 
         this.copyTemplate.push(`copyTemplate${this.cNombre}Language`);
     }
@@ -142,6 +146,7 @@ class Template {
         let origen = [
             `${this.rutaDesde}**/*.*`,
             `!${this.rutaMediaDesde}**`,
+            `!${this.rutaLanguagesDesde}**`,
         ]
 
         task(`copyTemplate${this.cNombre}Files`, series(`cleanTemplate${this.cNombre}Files`, () => {
@@ -176,7 +181,7 @@ class Template {
 
     // release task
     get releaseTask() {
-        let desde = this.rutaDesde + '**';
+        let desde = `${this.rutaDesde}**`;
         let destino = this.releaseDest;
         let filename = this.zipFileName;
 

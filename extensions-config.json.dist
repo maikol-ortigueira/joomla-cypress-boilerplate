@@ -2,7 +2,7 @@
     "components": [],
     "plugins": {
         "system": [],
-        "webservices": [],
+        "webservices": []
     },
     "modules": {
         "site": [],
