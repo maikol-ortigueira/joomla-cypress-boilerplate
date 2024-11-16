@@ -1,7 +1,7 @@
 {
-    "components": [],
+    "components": ["foo","bar"],
     "plugins": {
-        "system": [],
+        "system": ["bar"],
         "webservices": []
     },
     "modules": {
@@ -9,10 +9,10 @@
         "admin": []
     },
     "templates": {
-        "site": [],
+        "site": ["foo_template"],
         "admin": []
     },
-    "libraries": [""],
+    "libraries": [],
     "files": [],
     "package": {
         "name": "",

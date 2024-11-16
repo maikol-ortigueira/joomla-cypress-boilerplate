@@ -99,6 +99,20 @@ Para el desarrollo de extensiones Joomla! deberás preparar tu entorno teniendo 
             └── templaDetails.xml
 ```
 
+### Renombrar y configurar `extensions-config.json`
+
+Copiar y renombrar el fichero `extensions-config.json.dist`
+
+```bash
+cp ./extensions-config.json.dist ./extensions-config.json
+```
+
+Es necesario configurar el fichero teniendo en cuenta las extensiones en desarrollo. Actualmente el fichero de ejemplo está configurado para mapear 2 componentes (foo, bar), un plugin de sistema (bar), y una plantilla para el front de Joomla (foo_template). Las extensiones de ejemplo deberán borrarse de la configuración para evitar error.
+
+El resto de extensiones se configura del mismo modo.
+
+**IMPORTANTE:** Solo se mapearán las extensiones que se registren en este fichero de configuración, y si se registra alguna extensión que no tenga correspondencia en la carpeta `joomla_extensions`, siguiendo la estructura de carpetas propuestas, lanzará un error al querer mapear las extensiones.
+
 ## Posibles incidencias
 
 - Antes de levantar contenedores deberás comprobar que el puerto 80 de tu sistema está libre. Puedes comprobar con el siguiente comando en Ubuntu:

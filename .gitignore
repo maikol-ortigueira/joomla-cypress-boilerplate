@@ -15,7 +15,7 @@
 /releases/**
 /joomla_data/**
 /joomla_extensions/*
-!/joomla_extensions/.gitkeep
+!/joomla_extensions/.gitignore
 /extension2joomla/config.json
 extensions-config.json
 .gitignore_ortfeap
