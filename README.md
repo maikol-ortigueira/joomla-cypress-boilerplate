@@ -18,6 +18,7 @@
 - Make (https://www.gnu.org/software/make/)
 - Docker (https://docs.docker.com/desktop/)
 - docker-compose (https://docs.docker.com/compose/install/). También funciona con "docker compose"
+- Gulp
 
 ## Uso
 
